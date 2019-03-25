@@ -21,15 +21,15 @@ def print_bar_info(bar):
     print(templ_bar_info.format(*bar_info))
 
 
-def distance_from(user_coords):
-    def distance_to(bar):
+def get_distance_from(user_coords):
+    def get_distance_to(bar):
         x2 = bar['geometry']['coordinates'][0]
         x1 = user_coords[0]
         y2 = bar['geometry']['coordinates'][1]
         y1 = user_coords[1]
         distance = sqrt(pow(x2-x1, 2)+pow(y2-y1, 2))
         return distance
-    return distance_to
+    return get_distance_to
 
 
 def get_seats_count(bar):
@@ -46,7 +46,7 @@ def main():
     print('Введите свои координаты через пробел:')
     user_coords = [int(coord) for coord in input().split()]
     print('Самый близкий бар: ')
-    print_bar_info(min(data_bars['features'], key=distance_from(user_coords)))
+    print_bar_info(min(data_bars['features'], key=get_distance_from(user_coords)))
 
 if __name__ == '__main__':
     main()
