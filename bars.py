@@ -44,7 +44,7 @@ def main():
     print('Cамый маленький бар: ')
     print_bar_info(min(data_bars['features'], key=get_seats_count))
     print('Введите свои координаты через пробел:')
-    user_coords = [int(coord) for coord in input().split()]
+    user_coords = [float(coord) for coord in input().split()]
     print('Самый близкий бар: ')
     print_bar_info(min(data_bars['features'], key=get_distance_from(user_coords)))
 
