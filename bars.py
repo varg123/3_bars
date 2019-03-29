@@ -42,26 +42,25 @@ def load_data(filepath):
         data_bars_json = json.loads(data_file.read())
         data_bars = [
             {
-                'Name':bar['properties']['Attributes']['Name'],
+                'Name': bar['properties']['Attributes']['Name'],
                 'Address': bar['properties']['Attributes']['Address'],
                 'AdmArea': bar['properties']['Attributes']['AdmArea'],
                 'District': bar['properties']['Attributes']['District'],
                 'PublicPhone': bar['properties']['Attributes']['PublicPhone'][0]['PublicPhone'],
                 'SeatsCount': bar['properties']['Attributes']['SeatsCount'],
                 'Coordinates': bar['geometry']['coordinates']
-            } 
+            }
             for bar in data_bars_json['features']
         ]
         return data_bars
-    
+
 
 def parse_filepath():
     parser = argparse.ArgumentParser()
-    parser.add_argument ('-f', '--filepath', 
-        required=True, 
-        help='Имя файла с данными')
+    parser.add_argument('-f', '--filepath', required=True)
     namespace = parser.parse_args()
     return namespace.filepath
+
 
 def main():
     filepath_data_bars = parse_filepath()
@@ -73,15 +72,15 @@ def main():
     except FileNotFoundError:
         print("bars.py: error: the data file was not found.")
         exit()
-    
     print('Самый большой бар:')
     print_bar_info(max(data_bars, key=get_seats_count))
     print('Cамый маленький бар: ')
     print_bar_info(min(data_bars, key=get_seats_count))
     print('Введите свои координаты через пробел:')
+    user_coords = [float(coord) for coord in input().split()]
     try:
         user_coords = [float(coord) for coord in input().split()]
-    except:
+    except (ValueError, IndexError):
         print("Введенные координаты не корректны")
         exit()
     print('Самый близкий бар: ')
