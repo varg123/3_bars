@@ -1,6 +1,7 @@
 import json
 from math import sqrt, pow
 import sys
+import argparse
 
 
 def print_bar_info(bar):
@@ -36,9 +37,27 @@ def get_seats_count(bar):
     return bar['properties']['Attributes']['SeatsCount']
 
 
+def load_data(filepath):
+    with open(filepath, 'rt', encoding='utf8') as data_file:
+        return json.loads(data_file.read())
+
+
+def parse_filepath():
+    parser = argparse.ArgumentParser()
+    parser.add_argument ('-f', '--filepath', 
+        type = argparse.FileType(),
+        required=True, 
+        help='Имя файла с данными')
+    namespace = parser.parse_args()
+    namespace.filepath.close()
+    return namespace.filepath.name
+
 def main():
-    with open(sys.argv[1], 'rt', encoding='utf8') as data_file:
-        data_bars = json.loads(data_file.read())
+    filepath_data_bars = parse_filepath()
+    data_bars = load_data(filepath_data_bars)
+    print(dict(data_bars))
+    exit()
+    
     print('Самый большой бар:')
     print_bar_info(max(data_bars['features'], key=get_seats_count))
     print('Cамый маленький бар: ')
