@@ -67,11 +67,9 @@ def main():
     try:
         data_bars = load_data(filepath_data_bars)
     except (TypeError, json.decoder.JSONDecodeError):
-        print("bars.py: error: the data file is incorrect.")
-        exit()
+        exit("bars.py: error: the data file is incorrect.")
     except FileNotFoundError:
-        print("bars.py: error: the data file was not found.")
-        exit()
+        exit("bars.py: error: the data file was not found.")
     print('Самый большой бар:')
     print_bar_info(max(data_bars, key=get_seats_count))
     print('Cамый маленький бар: ')
@@ -81,8 +79,7 @@ def main():
     try:
         user_coords = [float(coord) for coord in input().split()]
     except (ValueError, IndexError):
-        print("Введенные координаты не корректны")
-        exit()
+        exit("Введенные координаты не корректны")
     print('Самый близкий бар: ')
     print_bar_info(min(data_bars, key=get_distance_from(user_coords)))
 
