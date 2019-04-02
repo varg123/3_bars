@@ -1,5 +1,5 @@
 import json
-from math import sqrt, pow
+from math import sqrt
 import sys
 import argparse
 
@@ -12,47 +12,35 @@ def print_bar_info(bar):
         Телефон: +7{}
     '''
     bar_info = templ_bar_info.format(
-        bar['Name'],
-        bar['AdmArea'],
-        bar['District'],
-        bar['Address'],
-        bar['SeatsCount'],
-        bar['PublicPhone'],
+        bar['properties']['Attributes']['Name'],
+        bar['properties']['Attributes']['AdmArea'],
+        bar['properties']['Attributes']['District'],
+        bar['properties']['Attributes']['Address'],
+        bar['properties']['Attributes']['SeatsCount'],
+        bar['properties']['Attributes']['PublicPhone'][0]['PublicPhone'],
     )
     print(bar_info)
 
 
 def get_distance_from(user_coords):
     def get_distance_to(bar):
-        x2 = bar['Coordinates'][0]
+        x2 = bar['geometry']['coordinates'][0]
         x1 = user_coords[0]
-        y2 = bar['Coordinates'][1]
+        y2 = bar['geometry']['coordinates'][1]
         y1 = user_coords[1]
-        distance = sqrt(pow(x2-x1, 2)+pow(y2-y1, 2))
+        distance = sqrt((x2-x1)**2 + (y2-y1)**2)
         return distance
     return get_distance_to
 
 
 def get_seats_count(bar):
-    return bar['SeatsCount']
+    return bar['properties']['Attributes']['SeatsCount']
 
 
 def load_data(filepath):
     with open(filepath, 'rt', encoding='utf8') as data_file:
-        data_bars_json = json.loads(data_file.read())
-        data_bars = [
-            {
-                'Name': bar['properties']['Attributes']['Name'],
-                'Address': bar['properties']['Attributes']['Address'],
-                'AdmArea': bar['properties']['Attributes']['AdmArea'],
-                'District': bar['properties']['Attributes']['District'],
-                'PublicPhone': bar['properties']['Attributes']['PublicPhone'][0]['PublicPhone'],
-                'SeatsCount': bar['properties']['Attributes']['SeatsCount'],
-                'Coordinates': bar['geometry']['coordinates']
-            }
-            for bar in data_bars_json['features']
-        ]
-        return data_bars
+        data_bars = json.loads(data_file.read())
+        return data_bars['features']
 
 
 def parse_filepath():
@@ -75,11 +63,10 @@ def main():
     print('Cамый маленький бар: ')
     print_bar_info(min(data_bars, key=get_seats_count))
     print('Введите свои координаты через пробел:')
-    user_coords = [float(coord) for coord in input().split()]
     try:
         user_coords = [float(coord) for coord in input().split()]
-    except (ValueError, IndexError):
-        exit("Введенные координаты не корректны")
+    except ValueError:
+        exit("bars.py: error: input coordinates is incorrect")
     print('Самый близкий бар: ')
     print_bar_info(min(data_bars, key=get_distance_from(user_coords)))
 
