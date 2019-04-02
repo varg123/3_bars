@@ -1,6 +1,5 @@
 import json
 from math import sqrt
-import sys
 import argparse
 
 
